@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        canvas {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        body {
+            overflow: hidden;
+            background-color: black
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas1"></canvas>
+
+    <script>
+        const canvas = document.getElementById("canvas1")
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        let adjustX = 40;
+        let adjustY = 20;
+
+        var particleArray = [];
+        var mouse = {
+            x: null, 
+            y: null,
+            radius: 70
+        }
+        window.addEventListener("mousemove", function(event){
+            mouse.x = event.x;
+            mouse.y = event.y;
+        })
+
+        ctx.fillStyle = "white";
+        ctx.font = "20px Verdana";
+        ctx.fillText("Arash",0,30);
+        const textCoordinate = ctx.getImageData(0,0,100,100);
+
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = 3;
+                this.baseX = this.x;
+                this.baseY = this.y;
+                this.density = Math.random() * 50;
+            }
+            draw(){
+                ctx.fillStyle = "white";
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size , 0 ,Math.PI *2);
+                ctx.closePath();
+                ctx.fill()
+            }
+            update(){
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                var maxDistance = mouse.radius
+                let force = (maxDistance - distance) / maxDistance
+                let forceDirectionX = dx/ distance;
+                let forceDirectionY = dy/ distance;
+                let directionX = forceDirectionX * force * this.density;
+                let directionY = forceDirectionY * force * this.density;
+                if(distance < mouse.radius){
+                    this.x -= directionX;
+                    this.y -= directionY;
+                } else {
+                    if(this.x !== this.baseX){
+                        let dx = this.x - this.baseX;
+                        this.x -= dx/10
+                    }
+                    if(this.y !== this.baseY){
+                        let dy = this.y - this.baseY;
+                        this.y -= dy/10
+                    }
+                }
+            }
+        }
+        function init(){
+            particleArray = []
+           for(let y=0,y2 = textCoordinate.height;y<y2;y++){
+            for(let x =0,x2 = textCoordinate.width; x<x2;x++){
+                if(textCoordinate.data[(y*4*textCoordinate.width) + (x*4) + 3] > 128){
+                    let positionX =x + adjustX;
+                    let positionY = y + adjustY;
+                    particleArray.push(new Particle(positionX * 10,positionY * 10))
+                }
+            }
+           }
+        }
+        init()
+        function animate(){
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for(let i = 0; i < particleArray.length;i++){
+                particleArray[i].draw();
+                particleArray[i].update();
+            }
+            connect()
+            requestAnimationFrame(animate)
+        }
+        animate()
+
+        function connect(){
+            let opacityValue = 1;
+            for(let a=0;a< particleArray.length;a++){
+                for(let b=a;b< particleArray.length;b++){
+                    let dx = particleArray[a].x - particleArray[b].x;
+                    let dy = particleArray[a].y - particleArray[b].y
+                    let distance = Math.sqrt(dx*dx + dy* dy)
+                    if(distance < 20){
+                        opacityValue = 1 - (distance/20)
+                        ctx.strokeStyle = "rgba(255,255,255," + opacityValue + ')';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(particleArray[a].x,particleArray[a].y);
+                        ctx.lineTo(particleArray[b].x,particleArray[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

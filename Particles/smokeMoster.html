@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0 !important;
+            padding: 0 !important;
+            box-sizing: border-box !important;
+        }
+ 
+        body {
+            margin: 0;
+            background-color:black
+          }
+          
+          #canvas1 {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background-color: black;
+            filter: blur(20px) contrast(40);
+          }
+        
+   
+    </style>
+</head>
+<body>
+
+    <canvas id="canvas1"></canvas>
+
+    <script>
+        var canvas = document.getElementById("canvas1");
+        var ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth
+        canvas.height = window.innerHeight
+        ctx.fillStyle = "white"
+
+        class Ball{
+            constructor(effect){
+                this.effect = effect
+                this.x = this.effect.width * 0.5;
+                this.y = this.effect.height * 0.5;
+                this.radius = Math.random() * 80;
+                this.speedX = Math.random() * 2 - 1;
+                this.speedY = Math.random() * 2 - 1;
+                this.angle = 0;
+                this.va = Math.random() * 0.1 - 0.05
+                this.range = Math.random() * 10
+            }
+            update(){
+                if(this.x < this.radius || this.x > this.effect.width - this.radius) this.speedX *= -1;
+                if(this.y < this.radius || this.y > this.effect.height - this.radius) this.speedY *= -1;
+                this.angle += this.va;
+                this.x += this.speedX * Math.cos(this.angle) *this.range;
+                this.y += this.speedY * Math.sin(this.angle) *this.range;
+            }
+            draw(context){
+                context.beginPath();
+                context.arc(this.x, this.y, this.radius,0,Math.PI*2);
+                context.fill()
+            }
+            reset(){
+                this.x = this.effect.width *  0.5;
+                this.y = this.effect.height * 0.5;
+            }
+        }
+
+        class MetaballEffect {
+            constructor(width,height){
+                this.width = width;
+                this.height = height;
+                this.metaballArray = [];
+            }
+            init(numberOfBalls){
+                for(let i = 0; i < numberOfBalls; i++){
+                    this.metaballArray.push(new Ball(this))
+                }
+            }
+            update(){
+                this.metaballArray.forEach(metaball => metaball.update())
+            }
+            draw(context){
+                this.metaballArray.forEach(metaball => metaball.draw(context))
+            }
+            reset(newWidth,newHeight){
+                this.width = newWidth
+                this.height = newHeight
+                this.metaballArray.forEach(metaball => metaball.reset())
+            }
+        }
+        window.addEventListener("resize", function(){
+            canvas.width = window.innerWidth
+            canvas.height = window.innerHeight
+            effect.reset(canvas.width,canvas.height)
+        })
+        const effect = new MetaballEffect(canvas.width,canvas.height);
+        effect.init(50)
+
+        function animate(){
+            ctx.clearRect(0,0,canvas.width,canvas.height)
+            effect.update();
+            effect.draw(ctx);
+            requestAnimationFrame(animate);
+        }
+        animate()
+
+
+
+
+
+
+
+
+    </script>
+</body>
+</html>
