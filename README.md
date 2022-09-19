@@ -1,7 +1,7 @@
 # CanvasProjects
 Custom made Canvas Projects
 
-Here i have some creative custome made projects that i learned in Youtube with the canvas elements.
+Here i have some creative custom made projects that i learned in Youtube with the canvas elements.
 all the codes used for this effects are coded **without** a library
 
 # Discription
