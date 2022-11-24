@@ -11,3 +11,12 @@ with the help of canvas element and javaScript and object oriented programming w
 
 
 **Note: if you are interested in learning more about canvas you can visit this channel, it is very clear and he explaines everything from the groundup so you dont need to know much about JavaScript or canvas to begin with. so make sure to visit his channel for more content https://www.youtube.com/c/Frankslaboratory. I learned this projects from him also**
+
+# textEffectWithConnection
+
+https://user-images.githubusercontent.com/92459590/203830533-57157d95-9f74-462d-a09d-a1971da67f97.mp4
+
+# Particle
+
+
+
